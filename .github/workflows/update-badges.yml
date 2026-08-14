@@ -1,0 +1,47 @@
+name: Update badges
+
+on:
+  schedule:
+    # 每 6 小時更新一次（UTC）
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'config.json'
+      - 'scripts/**'
+      - '.github/workflows/update-badges.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-badges
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Collect download counts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/update-badges.mjs
+
+      - name: Commit updated badges
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add badges data
+          if git diff --cached --quiet; then
+            echo 'No badge changes.'
+            exit 0
+          fi
+          git commit -m "chore: update badges ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+          git push

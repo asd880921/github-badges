@@ -1,0 +1,17 @@
+{
+  "badges": [
+    {
+      "id": "overtranslate-downloads",
+      "repo": "asd880921/OverTranslate",
+      "assets": [
+        "OverTranslate-win-Setup.exe",
+        "OverTranslate-win-Portable.zip"
+      ],
+      "label": "total downloads",
+      "color": "2ea44f",
+      "labelColor": "24292f",
+      "style": "for-the-badge",
+      "includePrereleases": true
+    }
+  ]
+}
