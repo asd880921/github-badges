@@ -53,7 +53,7 @@ async function buildBadge(badge) {
     assets = ['*'],
     label = 'downloads',
     color = '2ea44f',
-    labelColor = '24292f',
+    labelColor,
     style = 'for-the-badge',
     includePrereleases = true,
   } = badge;
@@ -77,9 +77,10 @@ async function buildBadge(badge) {
     label,
     message: formatCount(total),
     color,
-    labelColor,
     style,
   };
+  // 未指定時交給 shields 用預設底色（#555），才能和其他 badge 一致。
+  if (labelColor) badgeJson.labelColor = labelColor;
 
   const dataJson = {
     id,
