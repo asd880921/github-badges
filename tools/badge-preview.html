@@ -91,8 +91,8 @@
   <div class="panel">
     <div class="controls">
       <label for="color">下載量顏色</label>
-      <input type="color" id="color" value="#F97316" />
-      <input type="text" id="hex" value="F97316" spellcheck="false" />
+      <input type="color" id="color" value="#8B5CF6" />
+      <input type="text" id="hex" value="8B5CF6" spellcheck="false" />
       <label for="labelColor" style="margin-left:10px">左半底色</label>
       <input type="text" id="labelColor" value="" placeholder="留空 = #555" spellcheck="false" />
       <label for="label" style="margin-left:10px">文字</label>
@@ -127,10 +127,10 @@ const PRESETS = [
   ['0891B2', '深青'],
   ['0E7490', '墨青'],
   ['14B8A6', '藍綠'],
-  ['8B5CF6', '紫'],
+  ['8B5CF6', '紫（目前）'],
   ['7C3AED', '深紫'],
   ['EC4899', '粉'],
-  ['F97316', '橘（目前）'],
+  ['F97316', '橘'],
   ['F59E0B', '琥珀'],
   ['22C55E', '綠（同 license）'],
   ['007EC6', '藍（同 release）'],
@@ -149,7 +149,7 @@ function badgeUrl(label, message, color, labelColor) {
 }
 
 function render() {
-  const color = ($('hex').value.replace(/^#/, '').trim() || 'F97316').toUpperCase();
+  const color = ($('hex').value.replace(/^#/, '').trim() || '8B5CF6').toUpperCase();
   const labelColor = $('labelColor').value.replace(/^#/, '').trim();
   const label = $('label').value || 'total downloads';
 
