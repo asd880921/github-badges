@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<title>OverTranslate badge 配色預覽</title>
+<style>
+  :root {
+    --bg: #ffffff;          /* GitHub light canvas */
+    --panel: #f6f8fa;
+    --border: #d0d7de;
+    --fg: #1f2328;
+    --muted: #59636e;
+    --input-bg: #ffffff;
+  }
+  html[data-theme="dark"] {
+    --bg: #0d1117;          /* GitHub dark canvas */
+    --panel: #161b22;
+    --border: #30363d;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --input-bg: #0d1117;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 32px 48px;
+    font: 15px/1.6 "Segoe UI", "Microsoft JhengHei", system-ui, sans-serif;
+    background: var(--bg); color: var(--fg);
+    transition: background .15s ease, color .15s ease;
+  }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+  h1 { font-size: 20px; margin: 0; }
+  p.hint { margin: 0 0 22px; color: var(--muted); font-size: 13px; }
+  h2 { font-size: 13px; margin: 26px 0 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+
+  .toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .toggle button {
+    appearance: none; border: 0; background: transparent; color: var(--fg);
+    padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+  .toggle button + button { border-left: 1px solid var(--border); }
+  .toggle button[aria-pressed="true"] { background: #2f81f7; color: #fff; }
+
+  .panel { border: 1px solid var(--border); border-radius: 10px; padding: 20px; background: var(--panel); }
+  .controls { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  label { font-weight: 600; font-size: 13px; }
+  input[type=color] { width: 46px; height: 32px; padding: 0; border: 1px solid var(--border); border-radius: 6px; background: none; cursor: pointer; }
+  input[type=text] {
+    width: 108px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--input-bg); color: var(--fg); font-family: ui-monospace, Consolas, monospace;
+  }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .swatch { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(127,127,127,.45); cursor: pointer; }
+  .swatch[data-active="true"] { outline: 2px solid #2f81f7; outline-offset: 2px; }
+
+  /* 同時對照兩種底色 */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+  .canvas { border: 1px solid var(--border); border-radius: 10px; padding: 22px 16px; text-align: center; }
+  .canvas.light { background: #ffffff; }
+  .canvas.dark { background: #0d1117; }
+  .canvas .tag { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px; }
+  .canvas.light .tag { color: #59636e; }
+  .canvas.dark .tag { color: #8b949e; }
+  .canvas .sub { font-size: 13px; margin-bottom: 12px; }
+  .canvas.light .sub { color: #1f2328; }
+  .canvas.dark .sub { color: #e6edf3; }
+
+  code {
+    display: block; white-space: pre-wrap; word-break: break-all; padding: 12px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--panel);
+    font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--fg);
+  }
+  code.inline { display: inline; padding: 2px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>OverTranslate badge 配色預覽</h1>
+    <div class="toggle" id="themeToggle">
+      <button data-theme="light" aria-pressed="false">☀ 淺色</button>
+      <button data-theme="dark" aria-pressed="true">🌙 深色</button>
+      <button data-theme="system" aria-pressed="false">🖥 跟隨系統</button>
+    </div>
+  </header>
+  <p class="hint">
+    上方切換的是「這個預覽頁」的主題；下方兩塊固定用 GitHub 的實際底色（<code class="inline">#ffffff</code> / <code class="inline">#0d1117</code>）並排，
+    方便同時確認兩種讀者看到的效果。badge 由 shields.io 即時渲染，與正式上線結果一致。
+  </p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="color">下載量顏色</label>
+      <input type="color" id="color" value="#F97316" />
+      <input type="text" id="hex" value="F97316" spellcheck="false" />
+      <label for="labelColor" style="margin-left:10px">左半底色</label>
+      <input type="text" id="labelColor" value="" placeholder="留空 = #555" spellcheck="false" />
+      <label for="label" style="margin-left:10px">文字</label>
+      <input type="text" id="label" value="total downloads" spellcheck="false" style="width:150px" />
+    </div>
+
+    <div class="split">
+      <div class="canvas light">
+        <span class="tag">GitHub 淺色</span>
+        <div class="sub">截圖翻譯、即時翻譯、譯文原位覆蓋的 Windows 螢幕翻譯工具</div>
+        <div class="row" id="previewLight"></div>
+      </div>
+      <div class="canvas dark">
+        <span class="tag">GitHub 深色</span>
+        <div class="sub">截圖翻譯、即時翻譯、譯文原位覆蓋的 Windows 螢幕翻譯工具</div>
+        <div class="row" id="previewDark"></div>
+      </div>
+    </div>
+
+    <div class="swatches" id="swatches"></div>
+  </div>
+
+  <h2>config.json 片段</h2>
+  <code id="snippet"></code>
+
+  <h2>README 用的實際網址（正式版讀 raw JSON，顏色由 config 決定）</h2>
+  <code>https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json</code>
+
+<script>
+const PRESETS = [
+  ['06B6D4', '青（貼近 icon）'],
+  ['0891B2', '深青'],
+  ['0E7490', '墨青'],
+  ['14B8A6', '藍綠'],
+  ['8B5CF6', '紫'],
+  ['7C3AED', '深紫'],
+  ['EC4899', '粉'],
+  ['F97316', '橘（目前）'],
+  ['F59E0B', '琥珀'],
+  ['22C55E', '綠（同 license）'],
+  ['007EC6', '藍（同 release）'],
+  ['475569', '石板灰'],
+  ['64748B', '灰'],
+  ['24292F', 'GitHub 深灰'],
+];
+const $ = (id) => document.getElementById(id);
+const COUNT = '197';
+
+function badgeUrl(label, message, color, labelColor) {
+  const seg = (s) => encodeURIComponent(String(s).replace(/-/g, '--').replace(/_/g, '__'));
+  let url = `https://img.shields.io/badge/${seg(label)}-${seg(message)}-${color}?style=for-the-badge`;
+  if (labelColor) url += `&labelColor=${labelColor}`;
+  return url;
+}
+
+function render() {
+  const color = ($('hex').value.replace(/^#/, '').trim() || 'F97316').toUpperCase();
+  const labelColor = $('labelColor').value.replace(/^#/, '').trim();
+  const label = $('label').value || 'total downloads';
+
+  const html = `
+    <img src="https://img.shields.io/github/v/release/asd880921/OverTranslate?style=for-the-badge&label=latest%20release" alt="latest release" />
+    <img src="https://img.shields.io/badge/license-GPL--3.0-22C55E?style=for-the-badge" alt="license" />
+    <img src="${badgeUrl(label, COUNT, color, labelColor)}" alt="downloads" />
+  `;
+  $('previewLight').innerHTML = html;
+  $('previewDark').innerHTML = html;
+
+  document.querySelectorAll('.swatch').forEach((el) => {
+    el.dataset.active = (el.dataset.c === color) ? 'true' : 'false';
+  });
+
+  $('snippet').textContent = [
+    '{',
+    '  "id": "overtranslate-downloads",',
+    '  "repo": "asd880921/OverTranslate",',
+    '  "assets": ["OverTranslate-win-Setup.exe", "OverTranslate-win-Portable.zip"],',
+    `  "label": "${label}",`,
+    `  "color": "${color}",`,
+    ...(labelColor ? [`  "labelColor": "${labelColor}",`] : []),
+    '  "style": "for-the-badge",',
+    '  "includePrereleases": true',
+    '}',
+  ].join('\n');
+}
+
+// 主題切換（淺色 / 深色 / 跟隨系統）
+const media = window.matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(mode) {
+  const resolved = mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;
+  document.documentElement.dataset.theme = resolved;
+  localStorage.setItem('badge-preview-theme', mode);
+  document.querySelectorAll('#themeToggle button').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.dataset.theme === mode));
+  });
+}
+$('themeToggle').addEventListener('click', (e) => {
+  const mode = e.target.closest('button')?.dataset.theme;
+  if (mode) applyTheme(mode);
+});
+media.addEventListener('change', () => {
+  if (localStorage.getItem('badge-preview-theme') === 'system') applyTheme('system');
+});
+applyTheme(localStorage.getItem('badge-preview-theme') || 'dark');
+
+$('color').addEventListener('input', (e) => { $('hex').value = e.target.value.replace('#', '').toUpperCase(); render(); });
+$('hex').addEventListener('input', (e) => {
+  const v = e.target.value.replace(/^#/, '').trim();
+  if (/^[0-9a-fA-F]{6}$/.test(v)) $('color').value = '#' + v;
+  render();
+});
+$('labelColor').addEventListener('input', render);
+$('label').addEventListener('input', render);
+
+$('swatches').innerHTML = PRESETS.map(([c, name]) =>
+  `<div class="swatch" style="background:#${c}" title="#${c} ${name}" data-c="${c}"></div>`).join('');
+$('swatches').addEventListener('click', (e) => {
+  const c = e.target.dataset.c;
+  if (!c) return;
+  $('hex').value = c;
+  $('color').value = '#' + c;
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

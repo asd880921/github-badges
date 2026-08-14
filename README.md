@@ -36,6 +36,17 @@
 
 推上 `main` 後 workflow 會立即跑一次，之後每 6 小時自動更新，也可在 Actions 頁面手動觸發。
 
+## 配色預覽工具
+
+`tools/badge-preview.html` 用瀏覽器直接開啟即可（不需要伺服器），可即時試 badge 顏色：
+
+- 取色器 / 色碼輸入 / 預設色塊，改動即時重繪
+- 同時並排 GitHub **淺色 `#ffffff`** 與 **深色 `#0d1117`** 兩種底色，確認兩種讀者看到的效果
+- 頁面本身也有淺色 / 深色 / 跟隨系統的切換
+- 下方會產生可直接貼回 `config.json` 的片段
+
+預覽用的是 shields 的 static badge 端點，渲染結果與正式的 endpoint badge 一致。
+
 ## 輸出
 
 - `badges/<id>.json` — 給 shields.io 讀的 badge 資料（數字會格式化為 `1.2k` / `1.2M`）
