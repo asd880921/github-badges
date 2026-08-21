@@ -2,8 +2,8 @@ name: Update badges
 
 on:
   schedule:
-    # 每天台灣時間 00:00 更新一次（UTC 16:00）
-    - cron: '0 16 * * *'
+    # 每天台灣時間 00:00、12:00 各更新一次 (UTC+8)
+    - cron: '0 4,16 * * *'
   workflow_dispatch:
   push:
     branches: [main]
