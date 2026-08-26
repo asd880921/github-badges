@@ -1,100 +1,112 @@
 # github-badges
 
-集中產生 GitHub 統計 badge 的倉庫。
+English · [繁體中文](README.zh-TW.md)
 
-定時的 workflow 會呼叫 GitHub API 統計指定倉庫 Release 資產的下載量，
-把結果寫成 [shields.io endpoint](https://shields.io/badges/endpoint-badge) 格式的 JSON 並 commit 在這裡，
-主倉的 README 只需要引用這個 JSON，統計用的 commit 就不會汙染主倉的歷史。
+A central repository for generating GitHub statistics badges.
 
-## 使用中的 badge
+A scheduled workflow calls the GitHub API to total up the download counts of a given repository's release assets,
+writes the result as JSON in [shields.io endpoint](https://shields.io/badges/endpoint-badge) format and commits it here.
+The main repository's README only has to reference that JSON, so the statistics commits never pollute its history.
 
-| Badge | 來源倉庫 | 統計資產 |
-|-------|----------|----------|
+## Badges in use
+
+| Badge | Source repository | Assets counted |
+|-------|-------------------|----------------|
 | `badges/overtranslate-downloads.json` | [asd880921/OverTranslate](https://github.com/asd880921/OverTranslate) | `OverTranslate-win-Setup.exe` + `OverTranslate-win-Portable.zip` |
 
-引用方式（Markdown）：
+How to reference it (Markdown):
 
 ```markdown
 ![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
 ```
 
-> `raw.githubusercontent.com` 有約 5 分鐘的快取，badge 數字最多會延遲數分鐘才更新。
+> `raw.githubusercontent.com` caches for roughly 5 minutes, so the badge number can lag by a few minutes.
 
-## 下載歷史卡片
+## Download history card
 
-GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以增長量一律靠快照相減得出。
-每次 workflow 執行都會把累計值追加到 `data/history/<id>.csv`，再聚合成一張 SVG 統計卡片：
+The GitHub API only reports the *current* cumulative download count — there is no history — so every growth figure is derived by subtracting snapshots.
+Each workflow run appends the cumulative value to `data/history/<id>.csv`, which is then aggregated into SVG statistics cards (one per locale):
 
-- **左欄** — icon、名稱，以及卡片的主角：總下載量；下方三行是最新一期新增、區間新增合計、每期平均
-- **折線 / 面積** — 各期結束時的累積總量，對應左側刻度
-- **柱狀** — 各期新增量，另一套尺度（只佔繪圖區下半），最高的一根會直接標出數值
+- **Left column** — icon, name, and the star of the card: total downloads; the three rows below are the latest period's new downloads, the total for the range, and the per-period average
+- **Top half (line / area)** — cumulative total at the end of each period, read against the left-hand scale; only the most recent point gets an end marker
+- **Bottom half (bars)** — new downloads per period, with the value printed above every bar and the latest period emphasised
 
-引用方式（Markdown）：
+The line and the bars are two different units of measure, which is why they are split into two stacked panels sharing one x-axis
+rather than drawn against a common baseline — sharing a baseline would make them read as a single scale.
+Bar height only encodes relative magnitude; absolute numbers are always read from the labels above the bars.
+
+How to reference it (Markdown):
 
 ```markdown
 ![downloads history](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg)
 ```
 
-在 `config.json` 的 badge 設定中加上 `history` 即可啟用：
+The Traditional Chinese card is the same URL with a `.zh-TW` suffix before the extension — see `locales` below.
 
-| 欄位 | 說明 |
-|------|------|
-| `period` | 統計週期，`day` / `week` / `month` / `year`（預設 `day`）。改這個欄位即可切換，歷史資料不用重建 |
-| `limit` | 卡片顯示最近幾期（預設 `14`） |
-| `timezone` | 分期用的時區，格式 `+08:00`（預設 `+00:00`，即 UTC） |
-| `title` | 卡片左上角的名稱（預設為倉庫名） |
-| `accent` | 折線與柱狀的主色（預設沿用 badge 的 `color`），深色模式會自動提亮 |
-| `icon` | 內嵌到卡片左上角的 SVG 檔路徑，相對於倉庫根目錄；SVG 不能外連圖檔，所以 icon 必須放在本倉 |
+Add a `history` block to a badge's entry in `config.json` to enable it:
 
-幾個已知的限制：
+| Field | Description |
+|-------|-------------|
+| `period` | Aggregation period: `day` / `week` / `month` / `year` (default `day`). Changing this is enough to switch — the history data does not need rebuilding |
+| `limit` | How many recent periods the card shows (default `14`) |
+| `timezone` | Timezone used for bucketing, in `+08:00` form (default `+00:00`, i.e. UTC) |
+| `title` | The name in the card's top-left corner (defaults to the repository name) |
+| `accent` | Primary colour of the line and bars (defaults to the badge's `color`); brightened automatically in dark mode |
+| `icon` | Path to an SVG file to inline in the card's top-left corner, relative to the repository root. SVG cannot link to external images, so the icon must live in this repository |
+| `locales` | Array of locales to generate; `en` and `zh-TW` are supported (default `["en"]`). **The first locale keeps the plain filename** and the rest get a locale suffix, so adding or removing locales later never breaks existing links |
 
-- 「新增」是**該期最後一次執行**與前一期最後一次執行的差，因此期界落在 workflow 的執行時間上，不是精確的午夜。累計值本身一律準確。
-- 深色 / 淺色跟隨**讀者作業系統**的設定，不是 GitHub 的主題設定，兩者不一致時會看到相反的配色。
-- 圖片走 GitHub 的 camo 代理，快取比 shields badge 久，卡片更新會比 badge 慢一截。
+Known limitations:
 
-## 新增一個 badge
+- "New downloads" is the difference between the **last run of a period** and the last run of the previous period, so period boundaries fall on the workflow's run times rather than exact midnight. The cumulative value itself is always accurate.
+- Light/dark follows the **reader's operating system** setting, not their GitHub theme, so the two can disagree and show inverted colours.
+- Images are served through GitHub's camo proxy, which caches longer than shields badges do, so the card updates noticeably later than the badge.
+- **The locale is fixed per file and does not follow the reader.** SVG's `<switch systemLanguage>` can technically swap strings by browser language, but it keys off the reader's language preference rather than the README's, which would put a Chinese card on an English README. Hence one file per locale, chosen by whoever references it.
+- The card cannot contain `<script>`, external fonts, or external images, and it does not respond to the mouse — GitHub renders SVG through `<img>`, so pointer events never reach the image document and both `:hover` and `<title>` tooltips are inert. Chinese text can only use fonts the reader already has installed (`Microsoft JhengHei` / `PingFang TC` / `Noto Sans TC`).
 
-編輯 `config.json`，在 `badges` 陣列中加入一筆設定：
+## Adding a badge
 
-| 欄位 | 說明 |
-|------|------|
-| `id` | 輸出檔名，產生 `badges/<id>.json` 與 `data/<id>.json` |
-| `repo` | 來源倉庫，格式 `owner/name`（需為公開倉，或本倉的 token 有權限讀取） |
-| `assets` | 要累加的資產檔名陣列，支援 `*` 萬用字元（例如 `["OverTranslate-win-*"]`）；`["*"]` 表示所有資產 |
-| `label` | badge 左側文字（預設 `downloads`） |
-| `color` / `labelColor` | badge 顏色（預設 `2ea44f` / `24292f`） |
-| `style` | badge 樣式（預設 `for-the-badge`） |
-| `includePrereleases` | 是否納入 pre-release 的下載量（預設 `true`；draft 一律不計） |
+Edit `config.json` and add an entry to the `badges` array:
 
-推上 `main` 後 workflow 會立即跑一次，之後每 6 小時自動更新，也可在 Actions 頁面手動觸發。
+| Field | Description |
+|-------|-------------|
+| `id` | Output filename; produces `badges/<id>.json` and `data/<id>.json` |
+| `repo` | Source repository as `owner/name` (must be public, or this repository's token must have read access) |
+| `assets` | Array of asset filenames to sum, with `*` wildcards supported (e.g. `["OverTranslate-win-*"]`); `["*"]` means every asset |
+| `label` | Text on the left side of the badge (default `downloads`) |
+| `color` / `labelColor` | Badge colours (defaults `2ea44f` / `24292f`) |
+| `style` | Badge style (default `for-the-badge`) |
+| `includePrereleases` | Whether to count pre-release downloads (default `true`; drafts are never counted) |
 
-## 配色預覽工具
+Pushing to `main` runs the workflow immediately; after that it updates every 6 hours, and it can also be triggered manually from the Actions page.
 
-`tools/badge-preview.html` 用瀏覽器直接開啟即可（不需要伺服器），可即時試 badge 顏色：
+## Colour preview tool
 
-- 取色器 / 色碼輸入 / 預設色塊，改動即時重繪
-- 同時並排 GitHub **淺色 `#ffffff`** 與 **深色 `#0d1117`** 兩種底色，確認兩種讀者看到的效果
-- 頁面本身也有淺色 / 深色 / 跟隨系統的切換
-- 下方會產生可直接貼回 `config.json` 的片段
+Open `tools/badge-preview.html` directly in a browser — no server needed — to try badge colours live:
 
-預覽用的是 shields 的 static badge 端點，渲染結果與正式的 endpoint badge 一致。
+- Colour picker, hex input, and preset swatches, all redrawing instantly
+- Shows GitHub's **light `#ffffff`** and **dark `#0d1117`** backgrounds side by side, so you can check what both kinds of reader see
+- The page itself also toggles between light, dark, and follow-system
+- Generates a snippet at the bottom that can be pasted straight back into `config.json`
 
-## 輸出
+The preview uses shields' static badge endpoint, so it renders identically to the real endpoint badge.
 
-- `badges/<id>.json` — 給 shields.io 讀的 badge 資料（數字會格式化為 `1.2k` / `1.2M`）
-- `data/<id>.json` — 完整統計：總下載量、各資產明細、Release 數量、更新時間
-- `data/history/<id>.csv` — 歷史快照，只存 `timestamp,total`；累計值沒變的那次執行不留新的一筆
-- `badges/<id>-history.svg` — 由歷史快照聚合而成的統計卡片
+## Output
 
-## 本機執行
+- `badges/<id>.json` — badge data for shields.io to read (numbers formatted as `1.2k` / `1.2M`)
+- `data/<id>.json` — full statistics: total downloads, per-asset breakdown, release count, update time
+- `data/history/<id>.csv` — historical snapshots holding only `timestamp,total`; a run whose cumulative value is unchanged does not add a row
+- `badges/<id>-history.svg` — the statistics card aggregated from those snapshots (first locale in `history.locales`)
+- `badges/<id>-history.<locale>.svg` — the same card in the remaining locales, e.g. `badges/overtranslate-downloads-history.zh-TW.svg`
+
+## Running locally
 
 ```bash
 node scripts/update-badges.mjs
 ```
 
-未設定 `GITHUB_TOKEN` 時會以未驗證方式呼叫 API（每小時 60 次額度），統計公開倉庫仍可正常運作。
+Without `GITHUB_TOKEN` the API is called unauthenticated (60 requests per hour), which is still enough for public repositories.
 
-`data/history/<id>.csv` 若不存在或有缺漏，可從 git 歷史中每個版本的 `data/<id>.json` 還原（取檔案內的 `updatedAt`，不依賴 commit 時間）：
+If `data/history/<id>.csv` is missing or has gaps, it can be rebuilt from every past version of `data/<id>.json` in the git history (using the `updatedAt` inside the file, not the commit time):
 
 ```bash
 node scripts/backfill-history.mjs

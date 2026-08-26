@@ -4,7 +4,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { appendSnapshot, aggregate } from './history.mjs';
-import { renderHistorySvg } from './render-history-svg.mjs';
+import { renderHistorySvg, SUPPORTED_LOCALES } from './render-history-svg.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
@@ -66,20 +66,32 @@ async function buildHistory(badge, snapshot) {
     title = repo.split('/')[1],
     accent = color,
     icon,
+    locales = ['en'],
   } = history;
+
+  const unknown = locales.filter((locale) => !SUPPORTED_LOCALES.includes(locale));
+  if (unknown.length > 0) throw new Error(`未知的 history.locales: ${unknown.join(', ')}`);
 
   const { rows } = await appendSnapshot(id, snapshot.updatedAt, snapshot.total);
   const offsetMinutes = parseTimezone(timezone);
-  const svg = renderHistorySvg(aggregate(rows, { period, limit, offsetMinutes }), {
-    title,
-    period,
-    updatedAt: snapshot.updatedAt,
-    offsetMinutes,
-    accent,
-    grandTotal: snapshot.total,
-    icon: icon ? await readFile(join(ROOT, icon), 'utf8') : '',
-  });
-  await writeFile(join(ROOT, 'badges', `${id}-history.svg`), svg, 'utf8');
+  const aggregated = aggregate(rows, { period, limit, offsetMinutes });
+  const iconMarkup = icon ? await readFile(join(ROOT, icon), 'utf8') : '';
+
+  // 第一個語系沿用原檔名，換語系或加語系都不會動到既有 README 的連結。
+  for (const [index, locale] of locales.entries()) {
+    const svg = renderHistorySvg(aggregated, {
+      title,
+      period,
+      updatedAt: snapshot.updatedAt,
+      offsetMinutes,
+      accent,
+      grandTotal: snapshot.total,
+      icon: iconMarkup,
+      locale,
+    });
+    const suffix = index === 0 ? '' : `.${locale}`;
+    await writeFile(join(ROOT, 'badges', `${id}-history${suffix}.svg`), svg, 'utf8');
+  }
 }
 
 async function buildBadge(badge) {

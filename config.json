@@ -17,7 +17,8 @@
         "timezone": "+08:00",
         "title": "OverTranslate",
         "accent": "3B82F6",
-        "icon": "assets/overtranslate-icon.svg"
+        "icon": "assets/overtranslate-icon.svg",
+        "locales": ["en", "zh-TW"]
       }
     }
   ]

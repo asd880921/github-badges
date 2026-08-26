@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" lang="en" aria-label="OverTranslate: 681 total downloads, +71 in the latest day, +438 over the last 12 days.">
-  <title>OverTranslate downloads</title>
-  <desc>OverTranslate: 681 total downloads, +71 in the latest day, +438 over the last 12 days.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" lang="zh-TW" aria-label="OverTranslate：累積下載次數 681，最近一天 +71，近 12 天共 +438。">
+  <title>OverTranslate 下載量</title>
+  <desc>OverTranslate：累積下載次數 681，最近一天 +71，近 12 天共 +438。</desc>
   <defs>
     <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="var(--card-from)"/>
@@ -32,20 +32,20 @@
       svg { --grid:#9aa4b2; --muted:#3d444d; --frame:#57606a; }
     }
     text {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans TC', 'Heiti TC', sans-serif;
       text-rendering: geometricPrecision;
     }
     .name { font-size: 15px; font-weight: 600; letter-spacing: -.1px; fill: var(--fg); }
     .total { font-size: 52px; font-weight: 700; letter-spacing: -1.4px; fill: var(--fg); }
-    .total-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; fill: var(--muted); }
+    .total-label { font-size: 13px; font-weight: 700; letter-spacing: 0.6px; fill: var(--muted); stroke: var(--muted); stroke-width: 0.2; }
     .dl-icon { fill: none; stroke: var(--accent); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-    .stat-label { font-size: 11.5px; fill: var(--muted); }
+    .stat-label { font-size: 12px; fill: var(--muted); }
     .stat-value { font-size: 13px; font-weight: 600; fill: var(--fg); font-variant-numeric: tabular-nums; }
     .accent { fill: var(--accent); }
-    .caption { font-size: 11px; fill: var(--muted); }
+    .caption { font-size: 11.5px; fill: var(--muted); }
     .axis { font-size: 10px; fill: var(--muted); font-variant-numeric: tabular-nums; }
     .axis-latest { fill: var(--fg); font-weight: 600; }
-    .footer { font-size: 10px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+    .footer { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
     .grid { stroke: var(--grid); stroke-width: 1; }
     .bar { fill: var(--accent); opacity: .26; }
     .bar-latest { opacity: .85; }
@@ -134,18 +134,18 @@
   <text x="74" y="46" class="name">OverTranslate</text>
 
   <text x="28" y="128" class="total">681</text>
-  <g transform="translate(28.0 142.7) scale(0.7188)" class="dl-icon"><path d="M8 2.1V10"/><path d="M4.5 6.7 8 10.2 11.5 6.7"/><path d="M3 13.7h10"/></g>
-  <text x="46.5" y="152" class="total-label">TOTAL DOWNLOADS</text>
+  <g transform="translate(28.0 139.8) scale(0.9344)" class="dl-icon"><path d="M8 2.1V10"/><path d="M4.5 6.7 8 10.2 11.5 6.7"/><path d="M3 13.7h10"/></g>
+  <text x="50.0" y="152" class="total-label">累積下載次數</text>
 
-  <line x1="28" y1="171" x2="232" y2="171" class="grid"/><text x="28" y="188" class="stat-label">Latest day</text><text x="232" y="188" text-anchor="end" class="stat-value accent">+71</text>
-  <line x1="28" y1="197" x2="232" y2="197" class="grid"/><text x="28" y="214" class="stat-label">Last 12 days</text><text x="232" y="214" text-anchor="end" class="stat-value">+438</text>
-  <line x1="28" y1="223" x2="232" y2="223" class="grid"/><text x="28" y="240" class="stat-label">Average / day</text><text x="232" y="240" text-anchor="end" class="stat-value">+40</text>
+  <line x1="28" y1="171" x2="232" y2="171" class="grid"/><text x="28" y="188" class="stat-label">最近一天</text><text x="232" y="188" text-anchor="end" class="stat-value accent">+71</text>
+  <line x1="28" y1="197" x2="232" y2="197" class="grid"/><text x="28" y="214" class="stat-label">近 12 天</text><text x="232" y="214" text-anchor="end" class="stat-value">+438</text>
+  <line x1="28" y1="223" x2="232" y2="223" class="grid"/><text x="28" y="240" class="stat-label">平均每日</text><text x="232" y="240" text-anchor="end" class="stat-value">+40</text>
 
   <line x1="262" y1="26" x2="262" y2="274" stroke="url(#rule)" stroke-width="1"/>
 
-  <text x="306" y="46" class="caption">Last 12 days</text>
-  <rect x="558.0" y="40.9" width="14" height="2.2" rx="1.1" class="key-line"/><text x="642" y="46" text-anchor="end" class="caption">Cumulative</text>
-  <rect x="666.0" y="37" width="8" height="9" rx="2" class="key-bar"/><text x="732" y="46" text-anchor="end" class="caption">New / day</text>
+  <text x="306" y="46" class="caption">近 12 天</text>
+  <rect x="603.0" y="40.9" width="14" height="2.2" rx="1.1" class="key-line"/><text x="647" y="46" text-anchor="end" class="caption">累積</text>
+  <rect x="671.0" y="37" width="8" height="9" rx="2" class="key-bar"/><text x="732" y="46" text-anchor="end" class="caption">每日新增</text>
 
   <line x1="306" y1="196.0" x2="732" y2="196.0" class="grid"/><text x="296" y="199.5" text-anchor="end" class="axis">200</text>
   <line x1="306" y1="156.7" x2="732" y2="156.7" class="grid"/><text x="296" y="160.2" text-anchor="end" class="axis">400</text>
@@ -170,5 +170,5 @@
   
   
   <text x="732.0" y="260" text-anchor="end" class="axis axis-latest">08-26</text>
-  <text x="732" y="282" text-anchor="end" class="footer">updated 2026-08-26 19:02 UTC+8</text>
+  <text x="732" y="282" text-anchor="end" class="footer">更新於 2026-08-26 19:02 UTC+8</text>
 </svg>
