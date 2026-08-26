@@ -1,6 +1,13 @@
-# github-badges
+<div align="center">
+  <p>
+    <strong>Language : </strong>
+    <strong>English ✓</strong>
+    &nbsp;｜&nbsp;
+    <strong><a href="README.zh-TW.md">繁體中文</a></strong>
+  </p>
+</div>
 
-English · [繁體中文](README.zh-TW.md)
+# github-badges
 
 A central repository for generating GitHub statistics badges.
 

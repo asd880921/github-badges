@@ -1,6 +1,13 @@
-# github-badges
+<div align="center">
+  <p>
+    <strong>Language : </strong>
+    <strong><a href="README.md">English</a></strong>
+    &nbsp;｜&nbsp;
+    <strong>繁體中文 ✓</strong>
+  </p>
+</div>
 
-[English](README.md) · 繁體中文
+# github-badges
 
 集中產生 GitHub 統計 badge 的倉庫。
 
