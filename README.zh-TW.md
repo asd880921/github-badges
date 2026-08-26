@@ -17,7 +17,7 @@
 
 ## 使用中的 badge
 
-![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="總下載量" />
 
 | Badge | 來源倉庫 | 統計資產 |
 |-------|----------|----------|
@@ -33,7 +33,7 @@
 
 ## 下載歷史卡片
 
-![下載量歷史](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg)
+<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
 
 GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以增長量一律靠快照相減得出。
 每次 workflow 執行都會把累計值追加到 `data/history/<id>.csv`，再聚合成 SVG 統計卡片（每個語系各一張）：

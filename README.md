@@ -17,7 +17,7 @@ The main repository's README only has to reference that JSON, so the statistics 
 
 ## Badges in use
 
-![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="Total downloads" />
 
 | Badge | Source repository | Assets counted |
 |-------|-------------------|----------------|
@@ -33,7 +33,7 @@ How to reference it (Markdown):
 
 ## Download history card
 
-![downloads history](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg)
+<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg" alt="Downloads history" />
 
 The GitHub API only reports the *current* cumulative download count — there is no history — so every growth figure is derived by subtracting snapshots.
 Each workflow run appends the cumulative value to `data/history/<id>.csv`, which is then aggregated into SVG statistics cards (one per locale):
