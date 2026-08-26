@@ -1,24 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="352" height="372" viewBox="0 0 352 372" role="img" aria-label="OverTranslate total downloads">
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" aria-label="OverTranslate total downloads">
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="var(--card-from)"/>
+      <stop offset="1" stop-color="var(--card-to)"/>
+    </linearGradient>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--accent)" stop-opacity=".34"/>
+      <stop offset="1" stop-color="var(--accent)" stop-opacity=".02"/>
+    </linearGradient>
+  </defs>
   <style>
-    svg { --bg:#ffffff; --border:#d0d7de; --fg:#1f2328; --muted:#656d76; --zebra:#f6f8fa; --accent:#8B5CF6; }
-    @media (prefers-color-scheme: dark) {
-      svg { --bg:#0d1117; --border:#30363d; --fg:#e6edf3; --muted:#8b949e; --zebra:#161b22; --accent:#a78bfa; }
+    svg {
+      --card-from:#ffffff; --card-to:#f2f4f8; --frame:#d0d7de; --fg:#1f2328; --muted:#656d76;
+      --grid:#e4e8ee; --pill:#f6f8fa; --pill-line:#d8dee4;
+      --accent:#8B5CF6; --dot:#8B5CF6; --positive:#1a7f37;
     }
-    .frame { fill: var(--bg); stroke: var(--border); }
-    .zebra { fill: var(--zebra); }
-    .title { fill: var(--fg); font: 600 13px 'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif; }
-    .head { fill: var(--muted); font: 600 11px 'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif; }
-    .cell { fill: var(--fg); font: 12px 'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif; }
-    .muted { fill: var(--muted); }
-    .delta { fill: var(--accent); font: 600 12px 'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif; }
-    .bar { fill: var(--accent); opacity: .6; }
-    .foot { fill: var(--muted); font: 10px 'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif; }
+    @media (prefers-color-scheme: dark) {
+      svg {
+        --card-from:#111827; --card-to:#0b1020; --frame:#263244; --fg:#e6edf3; --muted:#8b949e;
+        --grid:#2b3546; --pill:#151d2d; --pill-line:#28354a;
+        --accent:#b495f9; --dot:#d1befb; --positive:#a7f3d0;
+      }
+    }
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: 650; fill: var(--fg); }
+    .sub { font-size: 12px; fill: var(--muted); }
+    .axis { font-size: 10px; fill: var(--muted); }
+    .grid { stroke: var(--grid); stroke-width: 1; }
+    .pill { fill: var(--pill); stroke: var(--pill-line); }
+    .pill-label { font-size: 10px; fill: var(--muted); letter-spacing: .5px; }
+    .pill-value { font-size: 17px; font-weight: 700; fill: var(--fg); }
+    .positive { fill: var(--positive); }
+    .bar { fill: var(--accent); opacity: .26; }
+    .line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .dot { fill: var(--dot); }
   </style>
-  <rect x=".5" y=".5" width="351" height="371" rx="6" class="frame"/>
-  <text x="14" y="22" class="title">OverTranslate total downloads</text>
-  <text x="14" y="52" class="head">每日</text>
-  <text x="144" y="52" class="head" text-anchor="end">新增</text>
-  <text x="220" y="52" class="head" text-anchor="end">累計</text>
-  <text x="14" y="76" class="cell muted">08-26</text><text x="144" y="76" class="cell delta" text-anchor="end">+61</text><text x="220" y="76" class="cell" text-anchor="end">671</text><rect x="234" y="68" width="96" height="8" rx="2" class="bar"/><rect x="1" y="84" width="350" height="24" class="zebra"/><text x="14" y="100" class="cell muted">08-25</text><text x="144" y="100" class="cell delta" text-anchor="end">+62</text><text x="220" y="100" class="cell" text-anchor="end">610</text><rect x="234" y="92" width="98" height="8" rx="2" class="bar"/><text x="14" y="124" class="cell muted">08-24</text><text x="144" y="124" class="cell delta" text-anchor="end">+66</text><text x="220" y="124" class="cell" text-anchor="end">548</text><rect x="234" y="116" width="104" height="8" rx="2" class="bar"/><rect x="1" y="132" width="350" height="24" class="zebra"/><text x="14" y="148" class="cell muted">08-23</text><text x="144" y="148" class="cell delta" text-anchor="end">+49</text><text x="220" y="148" class="cell" text-anchor="end">482</text><rect x="234" y="140" width="77" height="8" rx="2" class="bar"/><text x="14" y="172" class="cell muted">08-22</text><text x="144" y="172" class="cell delta" text-anchor="end">+17</text><text x="220" y="172" class="cell" text-anchor="end">433</text><rect x="234" y="164" width="27" height="8" rx="2" class="bar"/><rect x="1" y="180" width="350" height="24" class="zebra"/><text x="14" y="196" class="cell muted">08-21</text><text x="144" y="196" class="cell delta" text-anchor="end">+37</text><text x="220" y="196" class="cell" text-anchor="end">416</text><rect x="234" y="188" width="58" height="8" rx="2" class="bar"/><text x="14" y="220" class="cell muted">08-20</text><text x="144" y="220" class="cell delta" text-anchor="end">+18</text><text x="220" y="220" class="cell" text-anchor="end">379</text><rect x="234" y="212" width="28" height="8" rx="2" class="bar"/><rect x="1" y="228" width="350" height="24" class="zebra"/><text x="14" y="244" class="cell muted">08-19</text><text x="144" y="244" class="cell delta" text-anchor="end">+26</text><text x="220" y="244" class="cell" text-anchor="end">361</text><rect x="234" y="236" width="41" height="8" rx="2" class="bar"/><text x="14" y="268" class="cell muted">08-18</text><text x="144" y="268" class="cell delta" text-anchor="end">+28</text><text x="220" y="268" class="cell" text-anchor="end">335</text><rect x="234" y="260" width="44" height="8" rx="2" class="bar"/><rect x="1" y="276" width="350" height="24" class="zebra"/><text x="14" y="292" class="cell muted">08-17</text><text x="144" y="292" class="cell delta" text-anchor="end">+31</text><text x="220" y="292" class="cell" text-anchor="end">307</text><rect x="234" y="284" width="49" height="8" rx="2" class="bar"/><text x="14" y="316" class="cell muted">08-16</text><text x="144" y="316" class="cell delta" text-anchor="end">+33</text><text x="220" y="316" class="cell" text-anchor="end">276</text><rect x="234" y="308" width="52" height="8" rx="2" class="bar"/><rect x="1" y="324" width="350" height="24" class="zebra"/><text x="14" y="340" class="cell muted">08-15</text><text x="144" y="340" class="cell delta" text-anchor="end">—</text><text x="220" y="340" class="cell" text-anchor="end">243</text>
-  <text x="14" y="363" class="foot">更新於 2026-08-26 17:18 UTC+8</text>
+  <rect x=".5" y=".5" width="759" height="299" rx="18" fill="url(#card)" stroke="var(--frame)"/>
+  <text x="28" y="36" class="title">OverTranslate total downloads</text>
+  <text x="28" y="57" class="sub">Daily · Last 12 days</text>
+  <g transform="translate(458,20)">
+    <rect width="86" height="46" rx="10" class="pill"/>
+    <text x="12" y="17" class="pill-label">TOTAL</text>
+    <text x="12" y="36" class="pill-value ">674</text>
+  </g>
+  <g transform="translate(552,20)">
+    <rect width="86" height="46" rx="10" class="pill"/>
+    <text x="12" y="17" class="pill-label">PERIOD</text>
+    <text x="12" y="36" class="pill-value positive">+431</text>
+  </g>
+  <g transform="translate(646,20)">
+    <rect width="86" height="46" rx="10" class="pill"/>
+    <text x="12" y="17" class="pill-label">AVG</text>
+    <text x="12" y="36" class="pill-value ">+39</text>
+  </g>
+  <g opacity=".75">
+  <line x1="58" y1="238.0" x2="724" y2="238.0" class="grid"/><text x="48" y="242.0" text-anchor="end" class="axis">200</text>
+  <line x1="58" y1="208.8" x2="724" y2="208.8" class="grid"/><text x="48" y="212.8" text-anchor="end" class="axis">300</text>
+  <line x1="58" y1="179.6" x2="724" y2="179.6" class="grid"/><text x="48" y="183.6" text-anchor="end" class="axis">400</text>
+  <line x1="58" y1="150.4" x2="724" y2="150.4" class="grid"/><text x="48" y="154.4" text-anchor="end" class="axis">500</text>
+  <line x1="58" y1="121.2" x2="724" y2="121.2" class="grid"/><text x="48" y="125.2" text-anchor="end" class="axis">600</text>
+  <line x1="58" y1="92.0" x2="724" y2="92.0" class="grid"/><text x="48" y="96.0" text-anchor="end" class="axis">700</text>
+  </g>
+  <rect x="108.5" y="212.4" width="20.0" height="25.5" rx="2" class="bar"/><rect x="169.1" y="214.0" width="20.0" height="24.0" rx="2" class="bar"/><rect x="229.6" y="216.3" width="20.0" height="21.7" rx="2" class="bar"/><rect x="290.2" y="217.9" width="20.0" height="20.1" rx="2" class="bar"/><rect x="350.7" y="224.1" width="20.0" height="13.9" rx="2" class="bar"/><rect x="411.3" y="209.4" width="20.0" height="28.6" rx="2" class="bar"/><rect x="471.8" y="224.8" width="20.0" height="13.2" rx="2" class="bar"/><rect x="532.4" y="200.1" width="20.0" height="37.9" rx="2" class="bar"/><rect x="592.9" y="186.9" width="20.0" height="51.1" rx="2" class="bar"/><text x="602.9" y="180.9" text-anchor="middle" class="axis">+66</text><rect x="653.5" y="190.0" width="20.0" height="48.0" rx="2" class="bar"/><rect x="714.0" y="188.4" width="20.0" height="49.6" rx="2" class="bar"/>
+  <path d="M 58.0 225.4 L 118.5 215.8 L 179.1 206.8 L 239.6 198.6 L 300.2 191.0 L 360.7 185.7 L 421.3 174.9 L 481.8 170.0 L 542.4 155.7 L 602.9 136.4 L 663.5 118.3 L 724.0 99.6 L 724.0 238 L 58.0 238 Z" fill="url(#area)"/>
+  <path d="M 58.0 225.4 L 118.5 215.8 L 179.1 206.8 L 239.6 198.6 L 300.2 191.0 L 360.7 185.7 L 421.3 174.9 L 481.8 170.0 L 542.4 155.7 L 602.9 136.4 L 663.5 118.3 L 724.0 99.6" class="line"/>
+  <circle cx="58.0" cy="225.4" r="2.6" class="dot"/><circle cx="118.5" cy="215.8" r="2.6" class="dot"/><circle cx="179.1" cy="206.8" r="2.6" class="dot"/><circle cx="239.6" cy="198.6" r="2.6" class="dot"/><circle cx="300.2" cy="191.0" r="2.6" class="dot"/><circle cx="360.7" cy="185.7" r="2.6" class="dot"/><circle cx="421.3" cy="174.9" r="2.6" class="dot"/><circle cx="481.8" cy="170.0" r="2.6" class="dot"/><circle cx="542.4" cy="155.7" r="2.6" class="dot"/><circle cx="602.9" cy="136.4" r="2.6" class="dot"/><circle cx="663.5" cy="118.3" r="2.6" class="dot"/><circle cx="724.0" cy="99.6" r="2.6" class="dot"/>
+  <text x="58.0" y="262" text-anchor="middle" class="axis">08-15</text>
+  
+  <text x="179.1" y="262" text-anchor="middle" class="axis">08-17</text>
+  
+  <text x="300.2" y="262" text-anchor="middle" class="axis">08-19</text>
+  
+  <text x="421.3" y="262" text-anchor="middle" class="axis">08-21</text>
+  
+  <text x="542.4" y="262" text-anchor="middle" class="axis">08-23</text>
+  
+  <text x="663.5" y="262" text-anchor="middle" class="axis">08-25</text>
+  <text x="724.0" y="262" text-anchor="middle" class="axis">08-26</text>
+  <text x="28" y="284" class="axis">cumulative total (line) · new per day (bars, max +66)</text>
+  <text x="732" y="284" text-anchor="end" class="axis">updated 2026-08-26 17:43 UTC+8</text>
 </svg>

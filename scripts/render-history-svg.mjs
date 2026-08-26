@@ -1,29 +1,54 @@
-// 把聚合後的下載歷史畫成 SVG 表格，供其他倉庫以圖片方式引用。
+// 把聚合後的下載歷史畫成統計卡片：面積折線是各期累積總量，柱狀是各期新增，右上角是統整數字。
 // 限制：GitHub 以 <img> 呈現，SVG 內不能有腳本、不能外連字型，
 // 深淺色只能靠 prefers-color-scheme 由讀者端決定。
-const ROW_H = 24;
-const HEAD_H = 26;
-const TITLE_H = 34;
-const FOOT_H = 24;
-const PAD_X = 14;
-const COL_DATE = 58;
-const COL_DELTA = 58;
-const COL_TOTAL = 62;
-const COL_BAR = 104;
-const GAP = 14;
-const WIDTH = PAD_X * 2 + COL_DATE + COL_DELTA + COL_TOTAL + COL_BAR + GAP * 3;
+const WIDTH = 760;
+const HEIGHT = 300;
+const PLOT_LEFT = 58;
+const PLOT_RIGHT = 724;
+const PLOT_TOP = 92;
+const BASELINE = 238;
+const PILL_RIGHT = 732;
+const PILL_TOP = 20;
+const PILL_H = 46;
+const PILL_GAP = 8;
+// 柱狀只佔繪圖區下半，避免蓋掉折線。
+const BAR_ZONE = (BASELINE - PLOT_TOP) * 0.35;
 
-const X_DATE = PAD_X;
-const X_DELTA = X_DATE + COL_DATE + GAP + COL_DELTA;
-const X_TOTAL = X_DELTA + GAP + COL_TOTAL;
-const X_BAR = X_TOTAL + GAP;
-
-const FONT = "'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,'Microsoft JhengHei',sans-serif";
+const PERIOD_TEXT = {
+  day: { adverb: 'Daily', unit: 'days' },
+  week: { adverb: 'Weekly', unit: 'weeks' },
+  month: { adverb: 'Monthly', unit: 'months' },
+  year: { adverb: 'Yearly', unit: 'years' },
+};
 
 function escapeXml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;',
   })[char]);
+}
+
+/** 只有一個 accent 設定值，深色底需要更亮的版本才不會糊在深色卡片上。 */
+function lighten(hex, ratio) {
+  const value = hex.replace('#', '');
+  const channels = [0, 2, 4].map((i) => parseInt(value.slice(i, i + 2), 16));
+  return `#${channels.map((c) => Math.round(c + (255 - c) * ratio).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function niceStep(rough) {
+  const exponent = 10 ** Math.floor(Math.log10(rough));
+  const fraction = rough / exponent;
+  const nice = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 2.5 ? 2.5 : fraction <= 5 ? 5 : 10;
+  return nice * exponent;
+}
+
+/** 累積量軸不從 0 起算，否則各期變化都被壓平在頂端。 */
+function axisScale(min, max) {
+  const step = niceStep(Math.max(max - min, 1) / 5);
+  const from = Math.floor(min / step) * step;
+  const to = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let value = from; value <= to + step / 2; value += step) ticks.push(Math.round(value));
+  return { from, to: ticks[ticks.length - 1], ticks };
 }
 
 function formatWallTime(timestamp, offsetMinutes) {
@@ -35,51 +60,137 @@ function formatWallTime(timestamp, offsetMinutes) {
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC${zone}`;
 }
 
-export function renderHistorySvg(rows, { title, periodLabel = '日期', updatedAt, offsetMinutes = 0, accent = '8B5CF6' } = {}) {
-  const height = TITLE_H + HEAD_H + rows.length * ROW_H + FOOT_H;
-  const maxDelta = Math.max(1, ...rows.map((row) => row.delta ?? 0));
+function pill(rightEdge, label, value, valueClass) {
+  const width = Math.max(86, 26 + String(value).length * 11);
+  const svg = `<g transform="translate(${rightEdge - width},${PILL_TOP})">
+    <rect width="${width}" height="${PILL_H}" rx="10" class="pill"/>
+    <text x="12" y="17" class="pill-label">${escapeXml(label)}</text>
+    <text x="12" y="36" class="pill-value ${valueClass}">${escapeXml(value)}</text>
+  </g>`;
+  return { width, svg };
+}
 
-  const body = rows.map((row, index) => {
-    const y = TITLE_H + HEAD_H + index * ROW_H;
-    const baseline = y + 16;
-    const parts = [];
-    if (index % 2 === 1) {
-      parts.push(`<rect x="1" y="${y}" width="${WIDTH - 2}" height="${ROW_H}" class="zebra"/>`);
-    }
-    parts.push(`<text x="${X_DATE}" y="${baseline}" class="cell muted">${escapeXml(row.label)}</text>`);
-    parts.push(`<text x="${X_DELTA}" y="${baseline}" class="cell delta" text-anchor="end">${row.delta === null ? '—' : `+${row.delta}`}</text>`);
-    parts.push(`<text x="${X_TOTAL}" y="${baseline}" class="cell" text-anchor="end">${row.total}</text>`);
-    if (row.delta) {
-      const barW = Math.max(2, Math.round((row.delta / maxDelta) * COL_BAR));
-      parts.push(`<rect x="${X_BAR}" y="${y + 8}" width="${barW}" height="8" rx="2" class="bar"/>`);
-    }
-    return parts.join('');
+export function renderHistorySvg(newestFirst, {
+  title = 'downloads',
+  period = 'day',
+  updatedAt,
+  offsetMinutes = 0,
+  accent = '8B5CF6',
+  grandTotal,
+} = {}) {
+  const rows = [...newestFirst].reverse();
+  if (rows.length === 0) return '';
+
+  const totals = rows.map((row) => row.total);
+  const scale = axisScale(Math.min(...totals), Math.max(...totals));
+  const maxDelta = Math.max(1, ...rows.map((row) => row.delta ?? 0));
+  const known = rows.filter((row) => row.delta !== null);
+  const periodSum = known.reduce((sum, row) => sum + row.delta, 0);
+  const average = known.length > 0 ? Math.round(periodSum / known.length) : 0;
+
+  const x = (index) => (rows.length === 1
+    ? (PLOT_LEFT + PLOT_RIGHT) / 2
+    : PLOT_LEFT + (index * (PLOT_RIGHT - PLOT_LEFT)) / (rows.length - 1));
+  const y = (total) => BASELINE - ((total - scale.from) / (scale.to - scale.from)) * (BASELINE - PLOT_TOP);
+
+  const slot = rows.length > 1 ? (PLOT_RIGHT - PLOT_LEFT) / (rows.length - 1) : 60;
+  const barWidth = Math.max(3, Math.min(20, slot * 0.5));
+
+  const grid = scale.ticks.map((tick) => {
+    const ty = y(tick).toFixed(1);
+    return `<line x1="${PLOT_LEFT}" y1="${ty}" x2="${PLOT_RIGHT}" y2="${ty}" class="grid"/>`
+      + `<text x="${PLOT_LEFT - 10}" y="${(Number(ty) + 4).toFixed(1)}" text-anchor="end" class="axis">${tick}</text>`;
+  }).join('\n  ');
+
+  const peak = rows.findIndex((row) => row.delta === maxDelta);
+  const bars = rows.map((row, index) => {
+    if (!row.delta) return '';
+    const height = (row.delta / maxDelta) * BAR_ZONE;
+    const bar = `<rect x="${(x(index) - barWidth / 2).toFixed(1)}" y="${(BASELINE - height).toFixed(1)}" width="${barWidth.toFixed(1)}" height="${height.toFixed(1)}" rx="2" class="bar"/>`;
+    if (index !== peak) return bar;
+    return `${bar}<text x="${x(index).toFixed(1)}" y="${(BASELINE - height - 6).toFixed(1)}" text-anchor="middle" class="axis">+${row.delta}</text>`;
   }).join('');
 
-  const headBaseline = TITLE_H + 18;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}" role="img" aria-label="${escapeXml(title)}">
+  const line = rows.map((row, index) => `${index === 0 ? 'M' : 'L'} ${x(index).toFixed(1)} ${y(row.total).toFixed(1)}`).join(' ');
+  const area = `${line} L ${x(rows.length - 1).toFixed(1)} ${BASELINE} L ${x(0).toFixed(1)} ${BASELINE} Z`;
+  const dots = rows.map((row, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(row.total).toFixed(1)}" r="2.6" class="dot"/>`).join('');
+
+  // 標籤太密會疊在一起，抽稀後一定保留最舊與最新兩期。
+  const stride = Math.max(1, Math.ceil(rows.length / 8));
+  const labels = rows.map((row, index) => {
+    const last = index === rows.length - 1;
+    const keep = index === 0 || last || (index % stride === 0 && rows.length - 1 - index >= stride / 2);
+    if (!keep) return '';
+    return `<text x="${x(index).toFixed(1)}" y="262" text-anchor="middle" class="axis">${escapeXml(row.label)}</text>`;
+  }).join('\n  ');
+
+  const pills = [];
+  let cursor = PILL_RIGHT;
+  for (const [label, value, cls] of [
+    ['AVG', `+${average}`, ''],
+    ['PERIOD', `+${periodSum}`, 'positive'],
+    ['TOTAL', String(grandTotal ?? totals[totals.length - 1]), ''],
+  ]) {
+    const item = pill(cursor, label, value, cls);
+    pills.unshift(item.svg);
+    cursor -= item.width + PILL_GAP;
+  }
+
+  const text = PERIOD_TEXT[period] ?? PERIOD_TEXT.day;
+  const accentDark = lighten(`#${accent}`, 0.35);
+  const dotDark = lighten(`#${accent}`, 0.6);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-label="${escapeXml(title)}">
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="var(--card-from)"/>
+      <stop offset="1" stop-color="var(--card-to)"/>
+    </linearGradient>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--accent)" stop-opacity=".34"/>
+      <stop offset="1" stop-color="var(--accent)" stop-opacity=".02"/>
+    </linearGradient>
+  </defs>
   <style>
-    svg { --bg:#ffffff; --border:#d0d7de; --fg:#1f2328; --muted:#656d76; --zebra:#f6f8fa; --accent:#${accent}; }
-    @media (prefers-color-scheme: dark) {
-      svg { --bg:#0d1117; --border:#30363d; --fg:#e6edf3; --muted:#8b949e; --zebra:#161b22; --accent:#a78bfa; }
+    svg {
+      --card-from:#ffffff; --card-to:#f2f4f8; --frame:#d0d7de; --fg:#1f2328; --muted:#656d76;
+      --grid:#e4e8ee; --pill:#f6f8fa; --pill-line:#d8dee4;
+      --accent:#${accent}; --dot:#${accent}; --positive:#1a7f37;
     }
-    .frame { fill: var(--bg); stroke: var(--border); }
-    .zebra { fill: var(--zebra); }
-    .title { fill: var(--fg); font: 600 13px ${FONT}; }
-    .head { fill: var(--muted); font: 600 11px ${FONT}; }
-    .cell { fill: var(--fg); font: 12px ${FONT}; }
-    .muted { fill: var(--muted); }
-    .delta { fill: var(--accent); font: 600 12px ${FONT}; }
-    .bar { fill: var(--accent); opacity: .6; }
-    .foot { fill: var(--muted); font: 10px ${FONT}; }
+    @media (prefers-color-scheme: dark) {
+      svg {
+        --card-from:#111827; --card-to:#0b1020; --frame:#263244; --fg:#e6edf3; --muted:#8b949e;
+        --grid:#2b3546; --pill:#151d2d; --pill-line:#28354a;
+        --accent:${accentDark}; --dot:${dotDark}; --positive:#a7f3d0;
+      }
+    }
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Arial, sans-serif; }
+    .title { font-size: 18px; font-weight: 650; fill: var(--fg); }
+    .sub { font-size: 12px; fill: var(--muted); }
+    .axis { font-size: 10px; fill: var(--muted); }
+    .grid { stroke: var(--grid); stroke-width: 1; }
+    .pill { fill: var(--pill); stroke: var(--pill-line); }
+    .pill-label { font-size: 10px; fill: var(--muted); letter-spacing: .5px; }
+    .pill-value { font-size: 17px; font-weight: 700; fill: var(--fg); }
+    .positive { fill: var(--positive); }
+    .bar { fill: var(--accent); opacity: .26; }
+    .line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .dot { fill: var(--dot); }
   </style>
-  <rect x=".5" y=".5" width="${WIDTH - 1}" height="${height - 1}" rx="6" class="frame"/>
-  <text x="${X_DATE}" y="22" class="title">${escapeXml(title)}</text>
-  <text x="${X_DATE}" y="${headBaseline}" class="head">${escapeXml(periodLabel)}</text>
-  <text x="${X_DELTA}" y="${headBaseline}" class="head" text-anchor="end">新增</text>
-  <text x="${X_TOTAL}" y="${headBaseline}" class="head" text-anchor="end">累計</text>
-  ${body}
-  <text x="${X_DATE}" y="${height - 9}" class="foot">更新於 ${escapeXml(formatWallTime(updatedAt, offsetMinutes))}</text>
+  <rect x=".5" y=".5" width="${WIDTH - 1}" height="${HEIGHT - 1}" rx="18" fill="url(#card)" stroke="var(--frame)"/>
+  <text x="28" y="36" class="title">${escapeXml(title)}</text>
+  <text x="28" y="57" class="sub">${text.adverb} · Last ${rows.length} ${text.unit}</text>
+  ${pills.join('\n  ')}
+  <g opacity=".75">
+  ${grid}
+  </g>
+  ${bars}
+  <path d="${area}" fill="url(#area)"/>
+  <path d="${line}" class="line"/>
+  ${dots}
+  ${labels}
+  <text x="28" y="284" class="axis">cumulative total (line) · new per ${period} (bars, max +${maxDelta})</text>
+  <text x="${PILL_RIGHT}" y="284" text-anchor="end" class="axis">updated ${escapeXml(formatWallTime(updatedAt, offsetMinutes))}</text>
 </svg>
 `;
 }

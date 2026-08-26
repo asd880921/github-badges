@@ -8,7 +8,6 @@ import { renderHistorySvg } from './render-history-svg.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
-const PERIOD_LABELS = { day: '每日', week: '每週', month: '每月', year: '每年' };
 
 /** `+08:00` / `-05:30` / `Z` → 分鐘位移。 */
 function parseTimezone(value) {
@@ -66,10 +65,11 @@ async function buildHistory(badge, snapshot) {
   const offsetMinutes = parseTimezone(timezone);
   const svg = renderHistorySvg(aggregate(rows, { period, limit, offsetMinutes }), {
     title,
-    periodLabel: PERIOD_LABELS[period],
+    period,
     updatedAt: snapshot.updatedAt,
     offsetMinutes,
     accent: color,
+    grandTotal: snapshot.total,
   });
   await writeFile(join(ROOT, 'badges', `${id}-history.svg`), svg, 'utf8');
 }
