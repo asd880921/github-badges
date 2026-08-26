@@ -2,7 +2,7 @@
 <html lang="zh-Hant" data-theme="dark">
 <head>
 <meta charset="utf-8" />
-<title>OverTranslate badge 配色預覽</title>
+<title>badge 配色預覽</title>
 <style>
   :root {
     --bg: #ffffff;          /* GitHub light canvas */
@@ -76,7 +76,7 @@
 </head>
 <body>
   <header>
-    <h1>OverTranslate badge 配色預覽</h1>
+    <h1>badge 配色預覽</h1>
     <div class="toggle" id="themeToggle">
       <button data-theme="light" aria-pressed="false">☀ 淺色</button>
       <button data-theme="dark" aria-pressed="true">🌙 深色</button>
@@ -95,6 +95,8 @@
       <input type="text" id="hex" value="8B5CF6" spellcheck="false" />
       <label for="labelColor" style="margin-left:10px">左半底色</label>
       <input type="text" id="labelColor" value="" placeholder="留空 = #555" spellcheck="false" />
+      <label for="repo" style="margin-left:10px">來源倉庫</label>
+      <input type="text" id="repo" value="owner/repo" spellcheck="false" style="width:150px" />
       <label for="label" style="margin-left:10px">文字</label>
       <input type="text" id="label" value="total downloads" spellcheck="false" style="width:150px" />
     </div>
@@ -102,12 +104,12 @@
     <div class="split">
       <div class="canvas light">
         <span class="tag">GitHub 淺色</span>
-        <div class="sub">截圖翻譯、即時翻譯、譯文原位覆蓋的 Windows 螢幕翻譯工具</div>
+        <div class="sub">你的專案簡介會出現在這裡</div>
         <div class="row" id="previewLight"></div>
       </div>
       <div class="canvas dark">
         <span class="tag">GitHub 深色</span>
-        <div class="sub">截圖翻譯、即時翻譯、譯文原位覆蓋的 Windows 螢幕翻譯工具</div>
+        <div class="sub">你的專案簡介會出現在這裡</div>
         <div class="row" id="previewDark"></div>
       </div>
     </div>
@@ -119,7 +121,7 @@
   <code id="snippet"></code>
 
   <h2>README 用的實際網址（正式版讀 raw JSON，顏色由 config 決定）</h2>
-  <code>https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json</code>
+  <code>https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/&lt;你的帳號&gt;/github-statcards/main/badges/&lt;id&gt;.json</code>
 
 <script>
 const PRESETS = [
@@ -139,7 +141,7 @@ const PRESETS = [
   ['24292F', 'GitHub 深灰'],
 ];
 const $ = (id) => document.getElementById(id);
-const COUNT = '197';
+const COUNT = '1.2k';
 
 function badgeUrl(label, message, color, labelColor) {
   const seg = (s) => encodeURIComponent(String(s).replace(/-/g, '--').replace(/_/g, '__'));
@@ -152,10 +154,11 @@ function render() {
   const color = ($('hex').value.replace(/^#/, '').trim() || '8B5CF6').toUpperCase();
   const labelColor = $('labelColor').value.replace(/^#/, '').trim();
   const label = $('label').value || 'total downloads';
+  const repo = $('repo').value.trim() || 'owner/repo';
 
   const html = `
-    <img src="https://img.shields.io/github/v/release/asd880921/OverTranslate?style=for-the-badge&label=latest%20release" alt="latest release" />
-    <img src="https://img.shields.io/badge/license-GPL--3.0-22C55E?style=for-the-badge" alt="license" />
+    <img src="https://img.shields.io/github/v/release/${repo}?style=for-the-badge&label=latest%20release" alt="latest release" />
+    <img src="https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge" alt="license" />
     <img src="${badgeUrl(label, COUNT, color, labelColor)}" alt="downloads" />
   `;
   $('previewLight').innerHTML = html;
@@ -167,9 +170,9 @@ function render() {
 
   $('snippet').textContent = [
     '{',
-    '  "id": "overtranslate-downloads",',
-    '  "repo": "asd880921/OverTranslate",',
-    '  "assets": ["OverTranslate-win-Setup.exe", "OverTranslate-win-Portable.zip"],',
+    `  "id": "${repo.split("/").pop().toLowerCase()}-downloads",`,
+    `  "repo": "${repo}",`,
+    '  "assets": ["*"],',
     `  "label": "${label}",`,
     `  "color": "${color}",`,
     ...(labelColor ? [`  "labelColor": "${labelColor}",`] : []),
@@ -206,6 +209,7 @@ $('hex').addEventListener('input', (e) => {
 });
 $('labelColor').addEventListener('input', render);
 $('label').addEventListener('input', render);
+$('repo').addEventListener('input', render);
 
 $('swatches').innerHTML = PRESETS.map(([c, name]) =>
   `<div class="swatch" style="background:#${c}" title="#${c} ${name}" data-c="${c}"></div>`).join('');

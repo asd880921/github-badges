@@ -7,17 +7,23 @@
   </p>
 </div>
 
-# github-badges
+# github-statcards
 
-A central repository for generating GitHub statistics badges.
+Self-updating GitHub stat badges and stat cards you can drop into any README.
 
-A scheduled workflow calls the GitHub API to total up the download counts of a given repository's release assets,
-writes the result as JSON in [shields.io endpoint](https://shields.io/badges/endpoint-badge) format and commits it here.
-The main repository's README only has to reference that JSON, so the statistics commits never pollute its history.
+**The GitHub API only gives you the current cumulative count — it keeps no history at all.** This repository
+uses a scheduled workflow to append each snapshot to git, then derives the per-day growth by subtracting
+consecutive snapshots. In other words, it produces data GitHub itself will not give you.
+
+The output is JSON in [shields.io endpoint](https://shields.io/badges/endpoint-badge) format plus SVG cards,
+committed here and served over raw URLs. Keeping the statistics commits in this repository means they never
+pollute the history of the project being measured.
+
+No external service or account required — the data lives in your own git history.
 
 ## Badges in use
 
-<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="Total downloads" />
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-statcards/main/badges/overtranslate-downloads.json" alt="Total downloads" />
 
 | Badge | Source repository | Assets counted |
 |-------|-------------------|----------------|
@@ -26,14 +32,14 @@ The main repository's README only has to reference that JSON, so the statistics 
 How to reference it:
 
 ```html
-<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="Total downloads" />
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-statcards/main/badges/overtranslate-downloads.json" alt="Total downloads" />
 ```
 
 > `raw.githubusercontent.com` caches for roughly 5 minutes, so the badge number can lag by a few minutes.
 
 ## Download history card
 
-<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg" alt="Downloads history" />
+<img src="https://raw.githubusercontent.com/asd880921/github-statcards/main/cards/overtranslate-downloads-history.svg" alt="Downloads history" />
 
 The GitHub API only reports the *current* cumulative download count — there is no history — so every growth figure is derived by subtracting snapshots.
 Each workflow run appends the cumulative value to `data/history/<id>.csv`, which is then aggregated into SVG statistics cards (one per locale):
@@ -49,7 +55,7 @@ Bar height only encodes relative magnitude; absolute numbers are always read fro
 How to reference it:
 
 ```html
-<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg" alt="Downloads history" />
+<img src="https://raw.githubusercontent.com/asd880921/github-statcards/main/cards/overtranslate-downloads-history.svg" alt="Downloads history" />
 ```
 
 The Traditional Chinese card is the same URL with a `.zh-TW` suffix before the extension — see `locales` below.
@@ -88,7 +94,9 @@ Edit `config.json` and add an entry to the `badges` array:
 | `style` | Badge style (default `for-the-badge`) |
 | `includePrereleases` | Whether to count pre-release downloads (default `true`; drafts are never counted) |
 
-Pushing to `main` runs the workflow immediately; after that it updates every 6 hours, and it can also be triggered manually from the Actions page.
+Pushing to `main` runs the workflow immediately (only when `config.json`, `scripts/**`, or the workflow itself
+changed); after that it updates daily at 04:00 and 16:00 UTC, and it can also be triggered manually from the
+Actions page.
 
 ## Colour preview tool
 
@@ -106,8 +114,26 @@ The preview uses shields' static badge endpoint, so it renders identically to th
 - `badges/<id>.json` — badge data for shields.io to read (numbers formatted as `1.2k` / `1.2M`)
 - `data/<id>.json` — full statistics: total downloads, per-asset breakdown, release count, update time
 - `data/history/<id>.csv` — historical snapshots holding only `timestamp,total`; a run whose cumulative value is unchanged does not add a row
-- `badges/<id>-history.svg` — the statistics card aggregated from those snapshots (first locale in `history.locales`)
-- `badges/<id>-history.<locale>.svg` — the same card in the remaining locales, e.g. `badges/overtranslate-downloads-history.zh-TW.svg`
+- `cards/<id>-history.svg` — the statistics card aggregated from those snapshots (first locale in `history.locales`)
+- `cards/<id>-history.<locale>.svg` — the same card in the remaining locales, e.g. `cards/overtranslate-downloads-history.zh-TW.svg`
+
+## Using it for your own repository
+
+Take this repository and run it yourself — no external service or account is involved, and the data lives in
+your own git history, where nothing can rate-limit it or shut it down.
+
+1. Press **Use this template** to create your own repository (or just fork it).
+2. **Clear the example data**: delete the existing files under `data/`, `badges/`, and `cards/`. Those are this
+   repository's numbers — leave them in place and your first snapshot continues from someone else's total. The
+   scripts recreate anything that is missing, so deleting them breaks nothing.
+3. Edit `config.json`: point `repo` at your repository and `assets` at your asset filenames. The two tables
+   above cover the remaining fields.
+4. Under **Settings → Actions → General → Workflow permissions**, make sure **Read and write permissions** is
+   selected, otherwise the workflow cannot commit its output back to the repository.
+5. Push to `main`. The workflow runs immediately, then updates on a schedule.
+
+The schedule lives in the `cron` entry of `.github/workflows/update-badges.yml` — 04:00 and 16:00 UTC by
+default. Change it to suit you.
 
 ## Running locally
 
@@ -122,3 +148,7 @@ If `data/history/<id>.csv` is missing or has gaps, it can be rebuilt from every 
 ```bash
 node scripts/backfill-history.mjs
 ```
+
+## License
+
+[MIT](LICENSE) — free to use, modify, and distribute.

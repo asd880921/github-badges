@@ -7,17 +7,21 @@
   </p>
 </div>
 
-# github-badges
+# github-statcards
 
-集中產生 GitHub 統計 badge 的倉庫。
+自動產生 GitHub 統計 badge 與統計卡片，直接貼進任何 README。
 
-定時的 workflow 會呼叫 GitHub API 統計指定倉庫 Release 資產的下載量，
-把結果寫成 [shields.io endpoint](https://shields.io/badges/endpoint-badge) 格式的 JSON 並 commit 在這裡，
-主倉的 README 只需要引用這個 JSON，統計用的 commit 就不會汙染主倉的歷史。
+**GitHub API 只給你「當下的累計數字」，不給任何歷史。** 這個倉庫用排程 workflow 把每次的快照
+追加進 git，之後靠相減還原出每天的增量——也就是說，它產出的是 GitHub 本身給不了的資料。
+
+產物是 [shields.io endpoint](https://shields.io/badges/endpoint-badge) 格式的 JSON 與 SVG 卡片，
+commit 在這個倉庫裡並透過 raw 網址供人引用。統計用的 commit 集中在這裡，不會汙染主倉的歷史。
+
+不需要任何外部服務或帳號，資料存在你自己的 git 歷史中。
 
 ## 使用中的 badge
 
-<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="總下載量" />
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-statcards/main/badges/overtranslate-downloads.json" alt="總下載量" />
 
 | Badge | 來源倉庫 | 統計資產 |
 |-------|----------|----------|
@@ -26,14 +30,14 @@
 引用方式：
 
 ```html
-<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="總下載量" />
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-statcards/main/badges/overtranslate-downloads.json" alt="總下載量" />
 ```
 
 > `raw.githubusercontent.com` 有約 5 分鐘的快取，badge 數字最多會延遲數分鐘才更新。
 
 ## 下載歷史卡片
 
-<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
+<img src="https://raw.githubusercontent.com/asd880921/github-statcards/main/cards/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
 
 GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以增長量一律靠快照相減得出。
 每次 workflow 執行都會把累計值追加到 `data/history/<id>.csv`，再聚合成 SVG 統計卡片（每個語系各一張）：
@@ -48,7 +52,7 @@ GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以
 引用方式：
 
 ```html
-<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
+<img src="https://raw.githubusercontent.com/asd880921/github-statcards/main/cards/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
 ```
 
 英文版卡片是同一個網址去掉副檔名前的 `.zh-TW`，詳見下方的 `locales`。
@@ -87,7 +91,8 @@ GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以
 | `style` | badge 樣式（預設 `for-the-badge`） |
 | `includePrereleases` | 是否納入 pre-release 的下載量（預設 `true`；draft 一律不計） |
 
-推上 `main` 後 workflow 會立即跑一次，之後每 6 小時自動更新，也可在 Actions 頁面手動觸發。
+推上 `main` 後 workflow 會立即跑一次（僅限 `config.json`、`scripts/**` 或 workflow 本身有異動時），
+之後每天 UTC 04:00 與 16:00 自動更新，也可在 Actions 頁面手動觸發。
 
 ## 配色預覽工具
 
@@ -105,8 +110,24 @@ GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以
 - `badges/<id>.json` — 給 shields.io 讀的 badge 資料（數字會格式化為 `1.2k` / `1.2M`）
 - `data/<id>.json` — 完整統計：總下載量、各資產明細、Release 數量、更新時間
 - `data/history/<id>.csv` — 歷史快照，只存 `timestamp,total`；累計值沒變的那次執行不留新的一筆
-- `badges/<id>-history.svg` — 由歷史快照聚合而成的統計卡片（`history.locales` 的第一個語系）
-- `badges/<id>-history.<locale>.svg` — 其餘語系的同一張卡片，例如 `badges/overtranslate-downloads-history.zh-TW.svg`
+- `cards/<id>-history.svg` — 由歷史快照聚合而成的統計卡片（`history.locales` 的第一個語系）
+- `cards/<id>-history.<locale>.svg` — 其餘語系的同一張卡片，例如 `cards/overtranslate-downloads-history.zh-TW.svg`
+
+## 用在自己的倉庫
+
+這個倉庫可以直接拿去用，不需要任何外部服務或帳號——資料存在你自己的 git 歷史裡，
+不會被第三方服務限流或關閉。
+
+1. 按 **Use this template** 建立你自己的倉庫（或直接 fork）。
+2. **清掉範例資料**：刪除 `data/`、`badges/`、`cards/` 底下的既有檔案。這些是本倉的統計數字，
+   不刪的話你的第一筆快照會接在別人的數字後面。腳本會在檔案不存在時自建，刪掉不會壞。
+3. 改 `config.json`，把 `repo` 換成你的倉庫、`assets` 換成你的資產檔名，其餘欄位見上方兩張表。
+4. 到 **Settings → Actions → General → Workflow permissions**，確認勾選 **Read and write permissions**，
+   否則 workflow 無法把產出 commit 回倉庫。
+5. 推上 `main`。workflow 會立刻跑一次，之後每天固定兩個時間自動更新。
+
+排程時間寫在 `.github/workflows/update-badges.yml` 的 `cron`，預設是 UTC 04:00 與 16:00
+（台灣時間 12:00 與 24:00），可自行調整。
 
 ## 本機執行
 
@@ -121,3 +142,7 @@ node scripts/update-badges.mjs
 ```bash
 node scripts/backfill-history.mjs
 ```
+
+## 授權
+
+本專案採用 [MIT License](LICENSE) 授權，可自由使用、修改與散布。

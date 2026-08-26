@@ -39,7 +39,7 @@ async function fetchReleases(repo) {
   const headers = {
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'github-badges',
+    'User-Agent': 'github-statcards',
   };
   if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
 
@@ -77,6 +77,8 @@ async function buildHistory(badge, snapshot) {
   const aggregated = aggregate(rows, { period, limit, offsetMinutes });
   const iconMarkup = icon ? await readFile(join(ROOT, icon), 'utf8') : '';
 
+  await mkdir(join(ROOT, 'cards'), { recursive: true });
+
   // 第一個語系沿用原檔名，換語系或加語系都不會動到既有 README 的連結。
   for (const [index, locale] of locales.entries()) {
     const svg = renderHistorySvg(aggregated, {
@@ -90,7 +92,7 @@ async function buildHistory(badge, snapshot) {
       locale,
     });
     const suffix = index === 0 ? '' : `.${locale}`;
-    await writeFile(join(ROOT, 'badges', `${id}-history${suffix}.svg`), svg, 'utf8');
+    await writeFile(join(ROOT, 'cards', `${id}-history${suffix}.svg`), svg, 'utf8');
   }
 }
 
