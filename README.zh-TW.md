@@ -17,13 +17,11 @@
 
 ## 使用中的 badge
 
+![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+
 | Badge | 來源倉庫 | 統計資產 |
 |-------|----------|----------|
 | `badges/overtranslate-downloads.json` | [asd880921/OverTranslate](https://github.com/asd880921/OverTranslate) | `OverTranslate-win-Setup.exe` + `OverTranslate-win-Portable.zip` |
-
-實際呈現：
-
-![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
 
 引用方式（Markdown）：
 
@@ -35,6 +33,8 @@
 
 ## 下載歷史卡片
 
+![下載量歷史](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg)
+
 GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以增長量一律靠快照相減得出。
 每次 workflow 執行都會把累計值追加到 `data/history/<id>.csv`，再聚合成 SVG 統計卡片（每個語系各一張）：
 
@@ -44,10 +44,6 @@ GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以
 
 折線與柱狀是兩套不同的量綱，所以拆成上下兩塊共用 x 軸，而不是疊在同一條基準線上——
 疊在一起會被讀成同一把尺。柱高只編碼相對高低，絕對數量一律靠柱頂的數字讀。
-
-實際呈現（深色 / 淺色會跟著你的作業系統設定切換）：
-
-![下載量歷史](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg)
 
 引用方式（Markdown）：
 
