@@ -44,4 +44,7 @@ jobs:
             exit 0
           fi
           git commit -m "chore: update badges ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+          # run 被延遲或兩次執行重疊時，檢出的 sha 會落後於 main，直接 push 會被拒。
+          # 產出每次都是從當下的 API 資料重新算出來的，接到最新的 main 後面即可。
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
