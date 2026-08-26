@@ -21,6 +21,10 @@ The main repository's README only has to reference that JSON, so the statistics 
 |-------|-------------------|----------------|
 | `badges/overtranslate-downloads.json` | [asd880921/OverTranslate](https://github.com/asd880921/OverTranslate) | `OverTranslate-win-Setup.exe` + `OverTranslate-win-Portable.zip` |
 
+Live:
+
+![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+
 How to reference it (Markdown):
 
 ```markdown
@@ -41,6 +45,10 @@ Each workflow run appends the cumulative value to `data/history/<id>.csv`, which
 The line and the bars are two different units of measure, which is why they are split into two stacked panels sharing one x-axis
 rather than drawn against a common baseline — sharing a baseline would make them read as a single scale.
 Bar height only encodes relative magnitude; absolute numbers are always read from the labels above the bars.
+
+Live (light/dark follows your operating system setting):
+
+![downloads history](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg)
 
 How to reference it (Markdown):
 
