@@ -77,6 +77,8 @@ async function buildHistory(badge, snapshot) {
   const aggregated = aggregate(rows, { period, limit, offsetMinutes });
   const iconMarkup = icon ? await readFile(join(ROOT, icon), 'utf8') : '';
 
+  // 新增輸出目錄時，記得同步加進 workflow 的 `git add` 清單，
+  // 否則 workflow 會照常成功，但新目錄的產出永遠不會被提交。
   await mkdir(join(ROOT, 'cards'), { recursive: true });
 
   // 第一個語系沿用原檔名，換語系或加語系都不會動到既有 README 的連結。
