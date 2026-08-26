@@ -10,7 +10,13 @@
       "label": "total downloads",
       "color": "8B5CF6",
       "style": "for-the-badge",
-      "includePrereleases": true
+      "includePrereleases": true,
+      "history": {
+        "period": "day",
+        "limit": 14,
+        "timezone": "+08:00",
+        "title": "OverTranslate total downloads"
+      }
     }
   ]
 }

@@ -3,9 +3,21 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { appendSnapshot, aggregate } from './history.mjs';
+import { renderHistorySvg } from './render-history-svg.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
+const PERIOD_LABELS = { day: '每日', week: '每週', month: '每月', year: '每年' };
+
+/** `+08:00` / `-05:30` / `Z` → 分鐘位移。 */
+function parseTimezone(value) {
+  if (!value || value === 'Z') return 0;
+  const matched = /^([+-])(\d{2}):?(\d{2})$/.exec(value);
+  if (!matched) throw new Error(`無法解析 history.timezone: ${value}`);
+  const [, sign, hours, minutes] = matched;
+  return (sign === '-' ? -1 : 1) * (Number(hours) * 60 + Number(minutes));
+}
 
 /** 把 `*` 當萬用字元的簡易比對（例如 `OverTranslate-win-*.zip`）。 */
 function matchAsset(name, patterns) {
@@ -44,6 +56,22 @@ async function fetchReleases(repo) {
     if (batch.length < 100) break;
   }
   return releases;
+}
+
+async function buildHistory(badge, snapshot) {
+  const { id, repo, label = 'downloads', color = '2ea44f', history = {} } = badge;
+  const { period = 'day', limit = 14, timezone = '+00:00', title = `${repo.split('/')[1]} ${label}` } = history;
+
+  const { rows } = await appendSnapshot(id, snapshot.updatedAt, snapshot.total);
+  const offsetMinutes = parseTimezone(timezone);
+  const svg = renderHistorySvg(aggregate(rows, { period, limit, offsetMinutes }), {
+    title,
+    periodLabel: PERIOD_LABELS[period],
+    updatedAt: snapshot.updatedAt,
+    offsetMinutes,
+    accent: color,
+  });
+  await writeFile(join(ROOT, 'badges', `${id}-history.svg`), svg, 'utf8');
 }
 
 async function buildBadge(badge) {
@@ -95,6 +123,8 @@ async function buildBadge(badge) {
   await mkdir(join(ROOT, 'data'), { recursive: true });
   await writeFile(join(ROOT, 'badges', `${id}.json`), `${JSON.stringify(badgeJson, null, 2)}\n`, 'utf8');
   await writeFile(join(ROOT, 'data', `${id}.json`), `${JSON.stringify(dataJson, null, 2)}\n`, 'utf8');
+
+  await buildHistory(badge, dataJson);
 
   console.log(`${id}: ${total} (${Object.entries(perAsset).map(([k, v]) => `${k}=${v}`).join(', ') || 'no matching assets'})`);
 }

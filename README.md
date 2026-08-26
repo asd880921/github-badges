@@ -20,6 +20,32 @@
 
 > `raw.githubusercontent.com` 有約 5 分鐘的快取，badge 數字最多會延遲數分鐘才更新。
 
+## 下載歷史表格
+
+GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以增長量一律靠快照相減得出。
+每次 workflow 執行都會把累計值追加到 `data/history/<id>.csv`，再聚合成一張 SVG 表格。
+
+引用方式（Markdown）：
+
+```markdown
+![downloads history](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg)
+```
+
+在 `config.json` 的 badge 設定中加上 `history` 即可啟用：
+
+| 欄位 | 說明 |
+|------|------|
+| `period` | 統計週期，`day` / `week` / `month` / `year`（預設 `day`）。改這個欄位即可切換，歷史資料不用重建 |
+| `limit` | 表格顯示最近幾期（預設 `14`） |
+| `timezone` | 分期用的時區，格式 `+08:00`（預設 `+00:00`，即 UTC） |
+| `title` | 表格標題（預設 `<倉庫名> <label>`） |
+
+幾個已知的限制：
+
+- 「新增」是**該期最後一次執行**與前一期最後一次執行的差，因此期界落在 workflow 的執行時間上，不是精確的午夜。累計值本身一律準確。
+- 深色 / 淺色跟隨**讀者作業系統**的設定，不是 GitHub 的主題設定，兩者不一致時會看到相反的配色。
+- 圖片走 GitHub 的 camo 代理，快取比 shields badge 久，表格更新會比 badge 慢一截。
+
 ## 新增一個 badge
 
 編輯 `config.json`，在 `badges` 陣列中加入一筆設定：
@@ -51,6 +77,8 @@
 
 - `badges/<id>.json` — 給 shields.io 讀的 badge 資料（數字會格式化為 `1.2k` / `1.2M`）
 - `data/<id>.json` — 完整統計：總下載量、各資產明細、Release 數量、更新時間
+- `data/history/<id>.csv` — 歷史快照，只存 `timestamp,total`；累計值沒變的那次執行不留新的一筆
+- `badges/<id>-history.svg` — 由歷史快照聚合而成的表格圖片
 
 ## 本機執行
 
@@ -59,3 +87,9 @@ node scripts/update-badges.mjs
 ```
 
 未設定 `GITHUB_TOKEN` 時會以未驗證方式呼叫 API（每小時 60 次額度），統計公開倉庫仍可正常運作。
+
+`data/history/<id>.csv` 若不存在或有缺漏，可從 git 歷史中每個版本的 `data/<id>.json` 還原（取檔案內的 `updatedAt`，不依賴 commit 時間）：
+
+```bash
+node scripts/backfill-history.mjs
+```
