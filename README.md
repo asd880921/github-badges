@@ -23,10 +23,10 @@ The main repository's README only has to reference that JSON, so the statistics 
 |-------|-------------------|----------------|
 | `badges/overtranslate-downloads.json` | [asd880921/OverTranslate](https://github.com/asd880921/OverTranslate) | `OverTranslate-win-Setup.exe` + `OverTranslate-win-Portable.zip` |
 
-How to reference it (Markdown):
+How to reference it:
 
-```markdown
-![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+```html
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="Total downloads" />
 ```
 
 > `raw.githubusercontent.com` caches for roughly 5 minutes, so the badge number can lag by a few minutes.
@@ -46,10 +46,10 @@ The line and the bars are two different units of measure, which is why they are 
 rather than drawn against a common baseline — sharing a baseline would make them read as a single scale.
 Bar height only encodes relative magnitude; absolute numbers are always read from the labels above the bars.
 
-How to reference it (Markdown):
+How to reference it:
 
-```markdown
-![downloads history](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg)
+```html
+<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.svg" alt="Downloads history" />
 ```
 
 The Traditional Chinese card is the same URL with a `.zh-TW` suffix before the extension — see `locales` below.

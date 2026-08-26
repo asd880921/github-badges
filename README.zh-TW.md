@@ -23,10 +23,10 @@
 |-------|----------|----------|
 | `badges/overtranslate-downloads.json` | [asd880921/OverTranslate](https://github.com/asd880921/OverTranslate) | `OverTranslate-win-Setup.exe` + `OverTranslate-win-Portable.zip` |
 
-引用方式（Markdown）：
+引用方式：
 
-```markdown
-![total downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json)
+```html
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads.json" alt="總下載量" />
 ```
 
 > `raw.githubusercontent.com` 有約 5 分鐘的快取，badge 數字最多會延遲數分鐘才更新。
@@ -45,10 +45,10 @@ GitHub API 只提供「當下累計」的下載量，沒有任何歷史，所以
 折線與柱狀是兩套不同的量綱，所以拆成上下兩塊共用 x 軸，而不是疊在同一條基準線上——
 疊在一起會被讀成同一把尺。柱高只編碼相對高低，絕對數量一律靠柱頂的數字讀。
 
-引用方式（Markdown）：
+引用方式：
 
-```markdown
-![下載量歷史](https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg)
+```html
+<img src="https://raw.githubusercontent.com/asd880921/github-badges/main/badges/overtranslate-downloads-history.zh-TW.svg" alt="下載量歷史" />
 ```
 
 英文版卡片是同一個網址去掉副檔名前的 `.zh-TW`，詳見下方的 `locales`。
