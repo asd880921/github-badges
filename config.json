@@ -15,7 +15,9 @@
         "period": "day",
         "limit": 14,
         "timezone": "+08:00",
-        "title": "OverTranslate total downloads"
+        "title": "OverTranslate",
+        "accent": "3B82F6",
+        "icon": "assets/overtranslate-icon.svg"
       }
     }
   ]

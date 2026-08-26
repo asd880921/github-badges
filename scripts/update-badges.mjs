@@ -58,8 +58,15 @@ async function fetchReleases(repo) {
 }
 
 async function buildHistory(badge, snapshot) {
-  const { id, repo, label = 'downloads', color = '2ea44f', history = {} } = badge;
-  const { period = 'day', limit = 14, timezone = '+00:00', title = `${repo.split('/')[1]} ${label}` } = history;
+  const { id, repo, color = '2ea44f', history = {} } = badge;
+  const {
+    period = 'day',
+    limit = 14,
+    timezone = '+00:00',
+    title = repo.split('/')[1],
+    accent = color,
+    icon,
+  } = history;
 
   const { rows } = await appendSnapshot(id, snapshot.updatedAt, snapshot.total);
   const offsetMinutes = parseTimezone(timezone);
@@ -68,8 +75,9 @@ async function buildHistory(badge, snapshot) {
     period,
     updatedAt: snapshot.updatedAt,
     offsetMinutes,
-    accent: color,
+    accent,
     grandTotal: snapshot.total,
+    icon: icon ? await readFile(join(ROOT, icon), 'utf8') : '',
   });
   await writeFile(join(ROOT, 'badges', `${id}-history.svg`), svg, 'utf8');
 }
