@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <strong>Language : </strong>
+    🌐
     <strong><a href="README.md">English</a></strong>
     &nbsp;｜&nbsp;
     <strong>繁體中文 ✓</strong>
