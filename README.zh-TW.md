@@ -101,7 +101,7 @@ GitHub API 只提供目前的累計下載量，沒有歷史資料。本專案透
 更新 badge 與卡片：
 
 ```bash
-node scripts/update-badges.mjs
+node scripts/update-statcards.mjs
 ```
 
 未設定 `GITHUB_TOKEN` 時，公開倉庫仍可使用，但會受到 GitHub API 每小時 60 次的限制。

@@ -34,9 +34,9 @@ jobs:
       - name: Collect download counts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/update-badges.mjs
+        run: node scripts/update-statcards.mjs
 
-      - name: Commit updated badges
+      - name: Commit updated statcards
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

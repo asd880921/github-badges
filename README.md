@@ -101,7 +101,7 @@ Cumulative Download Statistics (Card):
 Update the badges and cards:
 
 ```bash
-node scripts/update-badges.mjs
+node scripts/update-statcards.mjs
 ```
 
 Public repositories still work without `GITHUB_TOKEN`, but are limited to 60 GitHub API requests per hour.
