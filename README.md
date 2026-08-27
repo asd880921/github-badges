@@ -31,7 +31,7 @@ The GitHub API only provides the current cumulative download count, not historic
 4. Go to **Settings → Actions → General → Workflow permissions** and select **Read and write permissions** so the workflow can commit its output.
 5. Push the configuration to `main`. The workflow runs immediately and continues updating on schedule.
 
-The default schedule runs daily at 04:00 and 16:00 UTC. You can change the `cron` value in `.github/workflows/update-badges.yml` or run the workflow manually from the Actions page.
+The default schedule runs daily at 04:00 and 16:00 UTC. You can change the `cron` value in `.github/workflows/update-statcards.yml` or run the workflow manually from the Actions page.
 
 ## Configure a Badge
 

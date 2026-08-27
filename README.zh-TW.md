@@ -31,7 +31,7 @@ GitHub API 只提供目前的累計下載量，沒有歷史資料。本專案透
 4. 前往 **Settings → Actions → General → Workflow permissions**，選擇 **Read and write permissions**，讓 workflow 能將結果提交回倉庫。
 5. 將設定推送到 `main`。workflow 會立即執行，之後依排程自動更新。
 
-預設每天在 UTC 04:00、16:00 執行。可修改 `.github/workflows/update-badges.yml` 中的 `cron`，也可以從 Actions 頁面手動執行。
+預設每天在 UTC 04:00、16:00 執行。可修改 `.github/workflows/update-statcards.yml` 中的 `cron`，也可以從 Actions 頁面手動執行。
 
 ## 設定 badge
 

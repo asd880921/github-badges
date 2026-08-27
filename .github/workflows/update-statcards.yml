@@ -1,4 +1,4 @@
-name: Update badges
+name: Update statcards
 
 on:
   schedule:
@@ -10,13 +10,13 @@ on:
     paths:
       - 'config.json'
       - 'scripts/**'
-      - '.github/workflows/update-badges.yml'
+      - '.github/workflows/update-statcards.yml'
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-badges
+  group: update-statcards
   cancel-in-progress: false
 
 jobs:
