@@ -2,8 +2,8 @@ name: Update statcards
 
 on:
   schedule:
-    # 每小時第 45 分更新一次
-    - cron: '45 * * * *'
+    # 每小時第 17 分更新一次
+    - cron: '17 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
