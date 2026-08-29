@@ -2,8 +2,8 @@ name: Update statcards
 
 on:
   schedule:
-    # 每天台灣時間 01:17、07:17、13:17、19:17 更新一次 (UTC+8)
-    - cron: '17 5,11,17,23 * * *'
+    # 每天台灣時間 11:17、17:17、23:17 更新一次（UTC+8）
+    - cron: '17 3,9,15 * * *'
   workflow_dispatch:
   push:
     branches: [main]
